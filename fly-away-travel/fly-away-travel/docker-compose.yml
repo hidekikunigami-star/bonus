@@ -1,0 +1,29 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: flyaway-postgres
+    environment:
+      POSTGRES_DB: flyaway
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: flyaway-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/flyaway
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      APP_JWT_SECRET: change-this-secret-key-for-development
+      APP_JWT_EXPIRATION_SECONDS: 3600
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
